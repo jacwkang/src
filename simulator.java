@@ -184,6 +184,16 @@ public class simulator {
 
     }
 
+    public void readCode(String line) {
+        if(line.substring(0,5).contains("#")) {
+            System.out.println("This line is only a comment.\n");
+            return;
+        } else if(line.contains("lw")) {
+            int test1 = 0x0001004F;
+            registers.put("$a0", test1);
+        }
+    }
+
     public int[] readMachineCode(String machine) {
         int[] code = new int[6];
         /*
