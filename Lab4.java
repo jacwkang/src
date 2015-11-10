@@ -19,9 +19,9 @@ public class Lab4{
    
       int i = 0;
       switch(reg){
-         case "$pc": i = 0;
+         case "$zero": i = 0;
                     break;
-         case "$0": i = 1;
+         case "$at": i = 1;
                     break;
          case "$v0": i = 2;
                     break;
@@ -71,9 +71,17 @@ public class Lab4{
                     break;
          case "$t9": i = 25;
                     break;
-         case "$sp": i = 26;
+         case "$k0": i = 26;
                     break;
-         case "$ra": i = 27;
+         case "$k1": i = 27;
+                    break;
+         case "$gp": i = 28;
+                    break;
+         case "$sp": i = 29;
+                    break;
+         case "$fp": i = 30;
+                    break;
+         case "$ra": i = 31;
                     break;
       }
       return i;
@@ -83,9 +91,9 @@ public class Lab4{
    public static void decode(int code){
    
       switch(code){
-         case 0: System.out.print("pc = ");
+         case 0: System.out.print("$zero = ");
                     break;
-         case 1: System.out.print("$0 = ");
+         case 1: System.out.print("$at = ");
                     break;
          case 2: System.out.print("$v0 = ");
                     break;
@@ -135,9 +143,17 @@ public class Lab4{
                     break;
          case 25: System.out.print("$t9 = ");
                     break;
-         case 26: System.out.print("$sp = ");
+         case 26: System.out.print("$k0 = ");
                     break;
-         case 27: System.out.print("$ra = ");
+         case 27: System.out.print("$k1 = ");
+                    break;
+         case 28: System.out.print("$gp = ");
+                    break;
+         case 29: System.out.print("$sp = ");
+                    break;
+         case 30: System.out.print("$fp = ");
+                    break;
+         case 31: System.out.print("$ra = ");
                     break;
       }
    }
