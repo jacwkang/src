@@ -9,7 +9,7 @@ import java.util.Scanner;
  * Created by homecomputer on 11/7/15.
  */
 public class simulator {
-    HashMap<Integer, String> registers = new HashMap<Integer, String>(); // Registers and respective values
+    static HashMap<String, Integer> registers = new HashMap<String, Integer>(); // Registers and respective values
     ArrayList<GenInstruction> instructions = new ArrayList<GenInstruction>(); // List of instructions
     static long programCounter;
 
@@ -22,7 +22,7 @@ public class simulator {
 
     public static void main(String[] args) {
         System.out.println("Simulation Mode");
-        String curline;
+        String curLine;
 
         try {
             FileReader fileReader = new FileReader(args[0]);
@@ -31,18 +31,18 @@ public class simulator {
             Scanner reader = new Scanner(System.in); // Takes user input
             String input;
 
-            while ((curline = bufferedReader.readLine()) != null) {
+            while ((curLine = bufferedReader.readLine()) != null) {
                 System.out.println("Next command: ");
                 input = reader.nextLine();
 
                 if (input.equals("S")) { // STEP
-                    if ((curline = bufferedReader.readLine()) != null) {
+                    if ((curLine = bufferedReader.readLine()) != null) {
                         readCode(curLine);
                         programCounter++;
                     }
                 }
                 else if (input.equals("R")) { // RUN
-                    while ((curline = bufferedReader.readLine()) != null) {
+                    while ((curLine = bufferedReader.readLine()) != null) {
                         readCode(curLine);
                         programCounter++;
                     }
@@ -216,7 +216,7 @@ public class simulator {
 
     }
 
-    public void readCode(String line) {
+    public static void readCode(String line) {
         if(line.substring(0,5).contains("#")) {
             System.out.println("This line is only a comment.\n");
             return;
