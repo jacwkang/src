@@ -14,8 +14,7 @@ public class simulator {
     static long programCounter;
 
     public static String parseString(String s) {
-        s = s.trim().replace("\t", "").replace("\r", "").
-                replace("\n", "").replace(" ", "");
+        s = s.trim().replace("\t", "").replace("\r", "").replace(" ", "");
 
         return s;
     }
@@ -23,6 +22,7 @@ public class simulator {
     public static void main(String[] args) {
         System.out.println("Simulation Mode");
         String curLine;
+        int programCounter = 0;
 
         try {
             FileReader fileReader = new FileReader(args[0]);
@@ -37,8 +37,9 @@ public class simulator {
 
                 if (input.equals("S")) { // STEP
                     if ((curLine = bufferedReader.readLine()) != null) {
-                        readCode(curLine);
-                        programCounter++;
+                        System.out.println(curLine);
+                        programCounter += readCode(curLine);
+                        System.out.println("Program counter is: " + programCounter);
                     }
                 }
                 else if (input.equals("R")) { // RUN
@@ -216,14 +217,57 @@ public class simulator {
 
     }
 
-    public static void readCode(String line) {
-        if(line.substring(0,5).contains("#")) {
-            System.out.println("This line is only a comment.\n");
-            return;
-        } else if(line.contains("lw")) {
-            int test1 = 0x0001004F;
-            registers.put("$a0", test1);
+    public static int readCode(String line) {
+        int inc = 0;
+        int temp = 0;
+        if(line.length()>1) {
+            System.out.println(line);
+            if(line.substring(0,3).contains("#")) {
+                System.out.println("This line is only a comment.\n");
+                inc = 0;
+            } else if(line.contains("lw")) {
+                int test1 = 0x0001004F;
+                registers.put("$a0", test1);
+                inc = 4;
+            } else if(line.contains("jal")) {
+                int countbits = 24;
+                registers.put("$ra", 12);
+                inc = countbits;
+            } else if(line.contains("or") && !line.contains("ori")) {
+                temp = registers.get("$v0");
+                registers.put("$t0", temp);
+                inc = 4;
+            } else if(line.contains("ori")) {
+                //needs work
+                inc = 4;
+            } else if (line.contains("addiu")) {
+                int sum = 0;
+                sum = registers.get("$v0") + 1;
+                registers.put("$v0", sum);
+                inc = 4;
+            } else if (line.contains("and")) {
+                temp = registers.get("$a0");
+                temp = temp & registers.get("$t0").intValue();
+                registers.put("$t1", temp);
+            } else if (line.contains("move")) {
+                registers.put("$v0", 0);
+            } else if (line.contains("beq")) {
+                if(registers.get("$t1") == 0) {
+                    inc = 1;
+                }
+            } else if (line.contains("sll")) {
+                temp = registers.get("$t1");
+                temp <<= 1;
+            } else if (line.contains("bne")) {
+                temp = registers.get("$t0");
+                if (temp != 0) {
+                    inc = -11;
+                }
+            } else if (line.contains("jr")) {
+                inc = registers.get("$ra");
+            }
         }
+        return inc;
     }
 
     public int[] readMachineCode(String machine) {
