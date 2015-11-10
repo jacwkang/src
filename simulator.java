@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -10,27 +11,58 @@ import java.util.Scanner;
 public class simulator {
     HashMap<Integer, String> registers = new HashMap<Integer, String>(); // Registers and respective values
     ArrayList<GenInstruction> instructions = new ArrayList<GenInstruction>(); // List of instructions
-    long programCounter;
+    static long programCounter;
+
+    public static String parseString(String s) {
+        s = s.trim().replace("\t", "").replace("\r", "").
+                replace("\n", "").replace(" ", "");
+
+        return s;
+    }
 
     public static void main(String[] args) {
         System.out.println("Simulation Mode");
+        String curline;
 
-        Scanner reader = new Scanner(System.in);
-        String line;
+        try {
+            FileReader fileReader = new FileReader(args[0]);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-        while (reader.hasNext()) {
-            line = reader.nextLine();
+            Scanner reader = new Scanner(System.in); // Takes user input
+            String input;
 
-            if (line.equals("Step")) {
+            while ((curline = bufferedReader.readLine()) != null) {
+                System.out.println("Next command: ");
+                input = reader.nextLine();
 
+                if (input.equals("S")) { // STEP
+                    if ((curline = bufferedReader.readLine()) != null) {
+                        readCode(curLine);
+                        programCounter++;
+                    }
+                }
+                else if (input.equals("R")) { // RUN
+                    while ((curline = bufferedReader.readLine()) != null) {
+                        readCode(curLine);
+                        programCounter++;
+                    }
+                }
+                else if (input.equals("P")) { // PRINT REGS
+                    displayRegisters();
+                }
+                else {
+                    System.out.println("Invalid command. Enter Run or Step to continue.");
+                }
             }
-            else if (line.equals("Run")) {
 
-            }
-            else {
-                System.out.println("Invalid command. Enter Run or Step to continue.");
-            }
         }
+        catch (FileNotFoundException e) {
+
+        }
+        catch (IOException e) {
+
+        }
+
     }
 
 
