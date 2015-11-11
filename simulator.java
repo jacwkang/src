@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 
@@ -24,7 +25,7 @@ public class simulator {
         int programCounter = 0;
 
         try {
-            FileReader fileReader = new FileReader(args[0]);
+            FileReader fileReader = new FileReader("/Users/homecomputer/IdeaProjects/315Lab4/src/countbits.s");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             Scanner reader = new Scanner(System.in); // Takes user input
@@ -36,8 +37,10 @@ public class simulator {
 
                 if (input.equals("S")) { // STEP
                     if ((curLine = bufferedReader.readLine()) != null) {
-                        System.out.println(curLine);
-                        programCounter += readCode(curLine);
+                        System.out.println("CURLINE: "+curLine);
+                        if (curLine.trim().length() > 0) { // Ensure that it's not all whitespaces
+                            programCounter += readCode(curLine);
+                        }
                         System.out.println("Program counter is: " + programCounter);
                     }
                 }
@@ -57,10 +60,10 @@ public class simulator {
 
         }
         catch (FileNotFoundException e) {
-
+            System.out.println("filenotfound");
         }
         catch (IOException e) {
-
+            System.out.println("ioexception");
         }
 
     }
@@ -213,7 +216,13 @@ public class simulator {
      * Displays the registers at the end of the run
      */
     public static void displayRegisters() {
+        Object registerArray[] = registers.entrySet().toArray();
+        Integer value;
+        String register;
 
+        for (int i = 0; i < registerArray.length; i++) {
+            System.out.println("WTF is this: " +registerArray[i].toString());
+        }
     }
 
     public static int readCode(String line) {
