@@ -10,19 +10,8 @@ import java.util.Scanner;
  */
 public class simulator {
     static HashMap<Integer, Integer> registers = new HashMap<Integer, Integer>(); // Registers and respective values
-    ArrayList<GenInstruction> instructions = new ArrayList<GenInstruction>(); // List of instructions
+    static ArrayList<GenInstruction> memory = new ArrayList<GenInstruction>(); // Memory
     static long programCounter = 4194304;
-
-    /**
-     * Helper function to parse the String to remove unnecessary characters
-     * @param s
-     * @return
-     */
-    public static String parseString(String s) {
-        s = s.trim().replace("\t", "").replace("\r", "").replace(" ", "");
-
-        return s;
-    }
 
     /**
      * Helper function to set up registers
@@ -36,8 +25,9 @@ public class simulator {
     public static void main(String[] args) {
         System.out.println("Simulation Mode");
         String curLine;
-        int programCounter = 0;
         int clock = 0;
+
+        setUpRegisters();
 
         try {
             FileReader fileReader = new FileReader("/Users/homecomputer/IdeaProjects/315Lab4/src/countbits.bin"); // File name supplied as first command line arg
@@ -58,6 +48,7 @@ public class simulator {
 
                             simulate(instruction);
                             clock += clockCycle(instruction.opcode);
+                            programCounter += 4;
                         }
                         System.out.println("Program counter is: " + programCounter);
                     }
@@ -68,6 +59,7 @@ public class simulator {
 
                         simulate(instruction);
                         clock += clockCycle(instruction.opcode);
+                        programCounter += 4;
 
                         System.out.println("Clock Cycle: " + clock);
                         System.out.println("Program Counter: " + programCounter);
