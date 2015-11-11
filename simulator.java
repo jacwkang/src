@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class simulator {
     static HashMap<Integer, Integer> registers = new HashMap<Integer, Integer>(); // Registers and respective values
     ArrayList<GenInstruction> instructions = new ArrayList<GenInstruction>(); // List of instructions
-    static long programCounter;
+    static long programCounter = 4194304;
 
     /**
      * Helper function to parse the String to remove unnecessary characters
@@ -24,6 +24,15 @@ public class simulator {
         return s;
     }
 
+    /**
+     * Helper function to set up registers
+     */
+    public static void setUpRegisters(){
+        for (int i = 0; i < 32; i++) {
+            registers.put(i, 0); // Put 0s in all the registers
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("Simulation Mode");
         String curLine;
@@ -31,7 +40,7 @@ public class simulator {
         int clock = 0;
 
         try {
-            FileReader fileReader = new FileReader(args[0]); // File name supplied as first command line arg
+            FileReader fileReader = new FileReader("/Users/homecomputer/IdeaProjects/315Lab4/src/countbits.bin"); // File name supplied as first command line arg
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             Scanner reader = new Scanner(System.in); // Takes user input
@@ -63,6 +72,7 @@ public class simulator {
                         System.out.println("Clock Cycle: " + clock);
                         System.out.println("Program Counter: " + programCounter);
                     }
+                    displayRegisters();
                 }
                 else if (input.equals("P")) { // PRINT REGS
                     displayRegisters();
@@ -173,25 +183,6 @@ public class simulator {
     }
 
     /**
-     * Instructions needed:
-     *
-     * lw -
-     * jal -
-     * move = add -
-     * li = lui then ori
-     * syscall
-     * or -
-     * ori -
-     * and -
-     * beq -
-     * addi - 0x00 0x21 rt rd sa
-     * addiu -
-     * sll -
-     * bne -
-     * jr -
-     */
-
-    /**
      * R Instruction
      * opcode - 000000
      */
@@ -218,7 +209,7 @@ public class simulator {
      *
      */
     private static class IInstruction extends GenInstruction {
-        int opcode
+        int opcode;
         int rs;
         int rt;
         int immediate;
@@ -296,27 +287,51 @@ public class simulator {
             IInstruction i = (IInstruction)instruction;
             // LW
             if (i.opcode == 35) {
+                int shift = i.immediate;
+                int rsValue = registers.get(i.rs);
 
+                int finalValue = rsValue + shift;
+                registers.put(i.rt, finalValue);
             }
             // BEQ
             else if (i.opcode == 8) {
+                int rsValue = registers.get(i.rs);
+                int rtValue = registers.get(i.rt);
 
+                if (rsValue == rtValue) {
+                    programCounter = i.immediate;
+                }
             }
             // ADDI
             else if (i.opcode == 4) {
+                int rsValue = registers.get(i.rs);
 
+                int finalValue = rsValue + i.immediate;
+                registers.put(i.rt, finalValue);
             }
             // ADDIU
             else if (i.opcode == 5) {
+                int rsValue = registers.get(i.rs);
 
+                int finalValue = rsValue + i.immediate;
+                registers.put(i.rt, finalValue);
             }
             // BNE
-            else if (i.opcode == 5) {
+            else if (i.opcode == 9) {
+                int rsValue = registers.get(i.rs);
+                int rtValue = registers.get(i.rt);
 
+                if (rsValue != rtValue) {
+                    programCounter = i.immediate;
+                }
             }
             // ORI
             else if (i.opcode == 13) {
+                int rsValue = registers.get(i.rs);
 
+                int finalValue = rsValue | i.immediate;
+
+                registers.put(i.rt, finalValue);
             }
         }
         else if (instruction.type.equals("JInstruction")) {
@@ -324,7 +339,7 @@ public class simulator {
 
             // JAL
             if (j.opcode == 3) {
-
+                programCounter = j.target;
             }
         }
     }
@@ -338,7 +353,7 @@ public class simulator {
         String register;
 
         for (int i = 0; i < registerArray.length; i++) {
-            System.out.println("WTF is this: " +registerArray[i].toString());
+            System.out.println(registerArray[i].toString());
         }
     }
 
@@ -347,7 +362,7 @@ public class simulator {
      * @param line
      * @return
      */
-    public static int readCode(String line) {
+    /*public static int readCode(String line) {
         int inc = 0;
         int temp = 0;
         if (line.length() > 1) {
@@ -398,5 +413,5 @@ public class simulator {
             }
         }
         return inc;
-    }
+    }*/
 }
