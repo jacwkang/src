@@ -3,10 +3,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-//this is a test change
 
 /**
- * Created by homecomputer on 11/7/15.
+ * Created by Jack Wang and Lincoln Tran on 11/7/15.
  */
 public class simulator {
     static HashMap<String, Integer> registers = new HashMap<String, Integer>(); // Registers and respective values
@@ -313,6 +312,22 @@ public class simulator {
         }
 
         return code;
+    }
+
+    public int clockCycle(int opcode, int function) {
+        int clock = 0;
+
+        if(opcode == 0) {
+            //all r type instructions have opcode of 0
+            clock = 4;
+        } else if (opcode == 0x02) {
+            //jump instructions
+            clock = 3;
+        } else {
+            clock = 4;
+        }
+
+        return clock;
     }
 
 }
